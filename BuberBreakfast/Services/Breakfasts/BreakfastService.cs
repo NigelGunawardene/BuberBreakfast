@@ -7,9 +7,10 @@ namespace BuberBreakfast.Services.Breakfasts;
 public class BreakfastService : IBreakfastService
 {
     private static readonly Dictionary<Guid, Breakfast> _breakfasts = new();
-    public void CreateBreakfast(Breakfast breakfast)
+    public ErrorOr<Created> CreateBreakfast(Breakfast breakfast)
     {
         _breakfasts.Add(breakfast.Id, breakfast);
+        return Result.Created;
     }
 
     public ErrorOr<Breakfast> GetBreakfast(Guid id)
@@ -22,13 +23,16 @@ public class BreakfastService : IBreakfastService
         return Errors.Breakfast.NotFound;
     }
 
-    public void UpsertBreakfast(Breakfast breakfast)
+    public ErrorOr<UpsertedBreakfast> UpsertBreakfast(Breakfast breakfast)
     {
+        var isNewlyCreated = !_breakfasts.ContainsKey(breakfast.Id); // if it doesnt contain the given ID, then we create a new one
         _breakfasts[breakfast.Id] = breakfast;
+        return new UpsertedBreakfast(isNewlyCreated);
     }
 
-    public void DeleteBreakfast(Guid id)
+    public ErrorOr<Deleted> DeleteBreakfast(Guid id)
     {
         _breakfasts.Remove(id);
+        return Result.Deleted;
     }
 }

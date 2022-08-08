@@ -300,6 +300,21 @@ Move common controller Attributes to ApiController
 
 So now we have a BaseController that other controllers will inherit from, when we have an error/list of errors, our new problem method will take the firsterror and customize the status code and then we use the Problem method from the controllerBase to return the status code and description 
 
+The flow:
+We call the BreakfastService from the controller, receieve the breakfast or a list of errors. If its a breakfast, we map it to the correct response and send it, otherwise we call our custom problem method, convert it to the correct response and send it. 
+
+Now changing the rest of the methods
+
+For upsert, since we want to know if the upsert actually did an update or insert, we can create our own type instead of using ErrorOr<Updated> - 
+
+Create UpsertedBreakfastResponse with UpsertedBreakfast
+Then we can return ErrorOr<UpsertedBreakfast>
+
+Then reduce code duplication in controller by moving shared response logic in create and upsert into a separate method
+
+All the errors we can expect in our system are located in the Errors folder/classes and they are well defined. This is a major advantage.
+
+
 
 ## Chapter Six
 
