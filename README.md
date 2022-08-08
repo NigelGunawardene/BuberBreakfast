@@ -270,7 +270,8 @@ Implemented CRUD operations in controller and service
 
 ## Chapter Five
 
-Global error handling
+### Global error handling
+#### Exception Middlware:
 
 In program.cs, we specify a route for error handling - app.UseExceptionHandler("error");
 
@@ -278,6 +279,27 @@ One of the middleware invokes the controller. By adding the line above, we use b
 
 Then we create an ErrorController with the route that we defined and do what we want with the exception/implment any error handling logic.
 In this example, we use the Problem method from the ControllerBase, returns 500 internal server error
+
+#### Error Handling:
+
+The approach taken here is from functional programming. Basically, when you request a Breakfast, we will try to give you a breakfast, otherwise we will give you an error that represents what happened
+
+Install ErrorOr. Create ServiceErrors Folder and a class where we can write the errors we expect. In this case, Breakfast.Errors. Then we describe the errors related to that entity.
+
+Then we edit the IService to reflect - ErrorOr<Breakfast> and the Service Implementation
+Update the controller
+
+To make the code more readable, we use the Match method in the controller - 
+The match method receives 2 functions, one will run if what we have is the right value, and the other one will run if its an error.
+
+In the GetBreakfast method, we can get the specific type of error (like Error.NotFound) and do something for that specific kind of error. Like this, we can get the type of the error and return a relevant response to the client. Otherwise, we can do something a bit more general - 
+
+We implement our own Problem() method:
+Create BaseController (called ApiController)
+Move common controller Attributes to ApiController
+
+So now we have a BaseController that other controllers will inherit from, when we have an error/list of errors, our new problem method will take the firsterror and customize the status code and then we use the Problem method from the controllerBase to return the status code and description 
+
 
 ## Chapter Six
 
