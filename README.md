@@ -252,9 +252,25 @@ Created CRUD endpoints
 
 ## Chapter Four
 
+Models and converting between them
+
+Motivation behind internal service models - 
+We create a contracts folder to represent the CONTRACT that we have with the client. We do not modify this.
+We map the data from the contract to an internal service model and inside the application, we only speak the language of this internal service model. The contracts model is ONLY for consistency with the client.
+
+In our CreateBreakfast controller method, we get the breakfast request, convert it to the internal service model (breakfast) and then after saving in the database, we convert it to breakfastResponse (DTO) and send it back to the client.
+
+NEW THING WE DID - Instead of returning Ok() from IActionResult, we return CreatedAtAction. This returns 201, and accepts 3 parameters:
+1. The action that the client can use to retrieve the resource
+2. Then because the resource needs an ID, we pass an object that contains the newly created item ID
+3. The response content
+
+Implemented CRUD operations in controller and service
+
 
 ## Chapter Five
 
+Global error handling
 
 ## Chapter Six
 
