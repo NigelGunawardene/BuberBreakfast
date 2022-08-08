@@ -272,6 +272,13 @@ Implemented CRUD operations in controller and service
 
 Global error handling
 
+In program.cs, we specify a route for error handling - app.UseExceptionHandler("error");
+
+One of the middleware invokes the controller. By adding the line above, we use built in capability of the framework to basically wrap middleware in a try catch block. If an exception is thrown, it catches the exception and it changes the route to what we specified and re-execute the request.
+
+Then we create an ErrorController with the route that we defined and do what we want with the exception/implment any error handling logic.
+In this example, we use the Problem method from the ControllerBase, returns 500 internal server error
+
 ## Chapter Six
 
 
