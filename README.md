@@ -247,6 +247,9 @@ Cleaned up Program.cs
 
 ## Chapter Three
 
+API definition
+Created CRUD endpoints
+
 ## Chapter Four
 
 
