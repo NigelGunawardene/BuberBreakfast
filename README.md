@@ -239,3 +239,21 @@ Web API holds our CRUD API and business logic.
 
 Docs: Holds our API definition
 Requests: Holds our API request definitions for testing
+
+## Chapter Two
+
+Created Models in Contracts project
+Cleaned up Program.cs
+
+## Chapter Three
+
+## Chapter Four
+
+
+## Chapter Five
+
+
+## Chapter Six
+
+
+## Chapter Seven
