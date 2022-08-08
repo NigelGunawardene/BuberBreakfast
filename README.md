@@ -318,5 +318,13 @@ All the errors we can expect in our system are located in the Errors folder/clas
 
 ## Chapter Six
 
+Enforcing business rules on internal service models
 
-## Chapter Seven
+We go to Breakfast.cs, change constructor to private and define a Create method ( this is a factory. its a static factory method)
+Now we enforce the business rules inside the Create method.
+Also define new errors in ServiceErrors
+We are also not limited to returning only 1 error, we can create a list and add all errors and return that 
+Change controller to use the Create method
+
+To improve our error handling, we check if all the errors that are returned are validation errors.
+If so, we return a ValidationProblem from ControllerBase. We need to give it a ModelStateDictionary to convert to a response
