@@ -239,3 +239,92 @@ Web API holds our CRUD API and business logic.
 
 Docs: Holds our API definition
 Requests: Holds our API request definitions for testing
+
+## Chapter Two
+
+Created Models in Contracts project
+Cleaned up Program.cs
+
+## Chapter Three
+
+API definition
+Created CRUD endpoints
+
+## Chapter Four
+
+Models and converting between them
+
+Motivation behind internal service models - 
+We create a contracts folder to represent the CONTRACT that we have with the client. We do not modify this.
+We map the data from the contract to an internal service model and inside the application, we only speak the language of this internal service model. The contracts model is ONLY for consistency with the client.
+
+In our CreateBreakfast controller method, we get the breakfast request, convert it to the internal service model (breakfast) and then after saving in the database, we convert it to breakfastResponse (DTO) and send it back to the client.
+
+NEW THING WE DID - Instead of returning Ok() from IActionResult, we return CreatedAtAction. This returns 201, and accepts 3 parameters:
+1. The action that the client can use to retrieve the resource
+2. Then because the resource needs an ID, we pass an object that contains the newly created item ID
+3. The response content
+
+Implemented CRUD operations in controller and service
+
+
+## Chapter Five
+
+### Global error handling
+#### Exception Middlware:
+
+In program.cs, we specify a route for error handling - app.UseExceptionHandler("error");
+
+One of the middleware invokes the controller. By adding the line above, we use built in capability of the framework to basically wrap middleware in a try catch block. If an exception is thrown, it catches the exception and it changes the route to what we specified and re-execute the request.
+
+Then we create an ErrorController with the route that we defined and do what we want with the exception/implment any error handling logic.
+In this example, we use the Problem method from the ControllerBase, returns 500 internal server error
+
+#### Error Handling:
+
+The approach taken here is from functional programming. Basically, when you request a Breakfast, we will try to give you a breakfast, otherwise we will give you an error that represents what happened
+
+Install ErrorOr. Create ServiceErrors Folder and a class where we can write the errors we expect. In this case, Breakfast.Errors. Then we describe the errors related to that entity.
+
+Then we edit the IService to reflect - ErrorOr<Breakfast> and the Service Implementation
+Update the controller
+
+To make the code more readable, we use the Match method in the controller - 
+The match method receives 2 functions, one will run if what we have is the right value, and the other one will run if its an error.
+
+In the GetBreakfast method, we can get the specific type of error (like Error.NotFound) and do something for that specific kind of error. Like this, we can get the type of the error and return a relevant response to the client. Otherwise, we can do something a bit more general - 
+
+We implement our own Problem() method:
+Create BaseController (called ApiController)
+Move common controller Attributes to ApiController
+
+So now we have a BaseController that other controllers will inherit from, when we have an error/list of errors, our new problem method will take the firsterror and customize the status code and then we use the Problem method from the controllerBase to return the status code and description 
+
+The flow:
+We call the BreakfastService from the controller, receieve the breakfast or a list of errors. If its a breakfast, we map it to the correct response and send it, otherwise we call our custom problem method, convert it to the correct response and send it. 
+
+Now changing the rest of the methods
+
+For upsert, since we want to know if the upsert actually did an update or insert, we can create our own type instead of using ErrorOr<Updated> - 
+
+Create UpsertedBreakfastResponse with UpsertedBreakfast
+Then we can return ErrorOr<UpsertedBreakfast>
+
+Then reduce code duplication in controller by moving shared response logic in create and upsert into a separate method
+
+All the errors we can expect in our system are located in the Errors folder/classes and they are well defined. This is a major advantage.
+
+
+
+## Chapter Six
+
+Enforcing business rules on internal service models
+
+We go to Breakfast.cs, change constructor to private and define a Create method ( this is a factory. its a static factory method)
+Now we enforce the business rules inside the Create method.
+Also define new errors in ServiceErrors
+We are also not limited to returning only 1 error, we can create a list and add all errors and return that 
+Change controller to use the Create method
+
+To improve our error handling, we check if all the errors that are returned are validation errors.
+If so, we return a ValidationProblem from ControllerBase. We need to give it a ModelStateDictionary to convert to a response
