@@ -352,7 +352,100 @@ OR in the DbContext Class with this method:
 override onConfiguring(DbContextOptionsBuilder optionsBuilder)
 ```
 
-We are using SqLite for this tutorial
+We are using SqLite for this tutorial - Install EntityFrameworkCore.Sqlite package
+
+---
+SIDE NOTE -
+install dotnet tool for EFCore 
+dotnet tool install -- global dotnet-ef
+dotnet tool list --global
+dotnet tool update -- global dotnet-ef
+
+---
+
+
+Add our migration - 
+Install EntityFrameworkCore.Design package
+dotnet ef migrations add InitialCreate --project BuberBreakfast
+
+We get an error because our Breakfast constructor is private and requires many parameters
+So we add a new constructor and private setters to our Breakfast class:
+
+```c#
+    private Breakfast() { }
+
+    public Guid Id { get; private set; }
+```
+
+It can be private because EF uses reflection and populates this object. When EF adds values to these properties and
+also build the migration definition, it looks at the class definition and iterate over all the properties
+
+We get another failure because our Lists need a primary key - because our savory and sweets items have a one : many relationship and we need to decide how it is going to be stored
+
+To fix this, inside our DbContext class, we use the OnModelCreating method to customize how we configure our object
+
+```c#
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Breakfast>()
+            .Property
+    }
+```
+
+This approach can take up a lot of space and get messy if we have a lot of DbSets.
+So we create a Persistence => Configurations folder and create a BreakfastConfigurations:
+
+```c#
+public class BreakfastConfigurations : IEntityTypeConfiguration<Breakfast>
+{
+    public void Configure(EntityTypeBuilder<Breakfast> builder)
+    {
+        throw new NotImplementedException();
+    }
+}
+```
+
+for our ID column, by default, EF lets the database generate the value. if the name of the property is ID, EF conventions allow it to automatically detect that. 
+Because we generate the ID ourselves, we configure EF to never generate IDs.
+
+Once again the migration fails, because EF doesnt know to look for the configuration file we created.
+In our DbContext, we add the following to tell it to scan the assembly for configurations
+
+```c#
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(BuberBreakfastDbContext).Assembly);
+    }
+```
+
+Now it works. The warning is that we override hasconversion but not the comparer (like it we override equals but not hashcode and vice versa)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
