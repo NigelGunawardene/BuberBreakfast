@@ -328,3 +328,13 @@ Change controller to use the Create method
 
 To improve our error handling, we check if all the errors that are returned are validation errors.
 If so, we return a ValidationProblem from ControllerBase. We need to give it a ModelStateDictionary to convert to a response
+
+## Adding EF Core - separate video (https://www.youtube.com/watch?v=v19arLqQkP8&t=601s)
+
+Add the EF Core Nuget Package to the main project
+
+Create Persistence folder -> BuberBreakfastDbContext
+
+Then change the BreakfastService to use the DbContext
+
+Define our database provider
