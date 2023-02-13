@@ -338,3 +338,33 @@ Create Persistence folder -> BuberBreakfastDbContext
 Then change the BreakfastService to use the DbContext
 
 Define our database provider
+In program.cs we register our context in the DI container
+
+To configure our data provider, we can either use options in program.cs like :
+
+```c#
+    builder.Services.AddDbContext<BuberBreakfastDbContext>(options =>   
+        options.UseSqlite("Data Source=BuberBreakfast.db"));
+```
+
+OR in the DbContext Class with this method: 
+```c#
+override onConfiguring(DbContextOptionsBuilder optionsBuilder)
+```
+
+We are using SqLite for this tutorial
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
