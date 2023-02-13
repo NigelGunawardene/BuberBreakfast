@@ -432,8 +432,33 @@ dotnet ef database update -p BuberBreakfast
 
 After running this, we see the new DB file created in our project
 
+installed Sqlite extension in code, ctrl shift P, open table, and select table and then bottom left corner
 
+Our app works as expected, except for the Update part of the Upsert method
 
+```javascript
+The instance of entity type 'Breakfast' cannot be tracked because another instance with the same key value for {'Id'} is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the conflicting key values.
+```
+
+This is due to EFCore's change tracker. In our update method
+we check for an existing object. This is a tracked object. EFC will run a select statement AND also start tracking the object, so any change that is done to it is tracked. 
+
+The error occurs because the breakfast object that we pass to the upsert method is also tracked. So we have 2 tracked entities with the same ID. 
+
+Option 1 - do not track the select statement object 
+
+```c#
+var isNewlyCreated = _dbContext.Breakfasts.AsNoTracking().FirstOrDefault(b => b.Id == breakfast.Id) is not Breakfast dbBreakfast;
+
+// Find is not supported with AsNoTracking
+```
+
+Option 2 -
+This is not great because we are searching the db for this object and then never using it. So we can improve the code by - 
+
+```c#
+var isNewlyCreated = !_dbContext.Breakfasts.Any((b => b.Id == breakfast.Id));
+```
 
 
 
