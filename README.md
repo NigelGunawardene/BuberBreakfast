@@ -418,11 +418,19 @@ In our DbContext, we add the following to tell it to scan the assembly for confi
     }
 ```
 
-Now it works. The warning is that we override hasconversion but not the comparer (like it we override equals but not hashcode and vice versa)
+Now it works and Migrations folder is created. The warning is that we override hasconversion but not the comparer (like it we override equals but not hashcode and vice versa)
 
 
+A Model Snapshot is the current state of the model stored in a class file named <YourContext>ModelSnapshot.cs The file is added to the Migrations folder when the first migration is created, and updated with each subsequent migration. It enables the migrations framework to calculate the changes required to bring the database up to date with the model.
 
+Now the MIGRATION is created, this is just the design of the database, and the actual database is not created
+We run the following command to create/update the schema:
 
+```c#
+dotnet ef database update -p BuberBreakfast
+```
+
+After running this, we see the new DB file created in our project
 
 
 
